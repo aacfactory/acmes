@@ -1,4 +1,4 @@
-FROM golang:1.18.1-alpine3.16 AS builder
+FROM golang:1.18.2-alpine3.16 AS builder
 
 ENV GO111MODULE on
 ENV GOPROXY https://goproxy.cn,direct
