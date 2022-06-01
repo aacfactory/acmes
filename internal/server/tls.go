@@ -11,7 +11,7 @@ import (
 func createTLSConfig(ca string, key string) (config *tls.Config, err error) {
 	caPEM, caErr := ioutil.ReadFile(ca)
 	if caErr != nil {
-		err = fmt.Errorf("acmes: read ca file failed, %v", caPEM)
+		err = fmt.Errorf("acmes: read ca file failed, %v", caErr)
 		return
 	}
 	keyPEM, keyErr := ioutil.ReadFile(key)

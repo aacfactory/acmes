@@ -15,7 +15,8 @@ FROM alpine:3.16
 
 COPY --from=builder /dist /
 
-RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo "Asia/Shanghai" > /etc/timezone && mkdir /cert && mkdir /data
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
+RUN apk add tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && echo "Asia/Shanghai" > /etc/timezone && mkdir /cert && mkdir /data && chmod +x /acmes
 
 WORKDIR /
 
