@@ -31,5 +31,5 @@ VOLUME ["/cert", "/data"]
 
 EXPOSE 443
 
-ENTRYPOINT ["./acme", "serve"]
+ENTRYPOINT ["./acmes", "serve"]
 
