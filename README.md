@@ -21,14 +21,17 @@ acmes serve --port 8443 \
   --email for@bar.com 
 ```
 Run in docker
+* make your self sign ca
+* choose your dns provider
+* run it
 ```shell
 docker run -d --rm --name acmes \
   -e ACMES_EMAIL=foo@bar.com \
   -e ACMES_DNS_PROVIDER=alidns \
   -e ALICLOUD_ACCESS_KEY=foo \
   -e ALICLOUD_SECRET_KEY=bar \
-  -v $PWD/data=/data \
-  -v $PWD/cert=/cert \
-  wangminxiang0425/acmes
+  -v $PWD/data:/data \
+  -v $PWD/cert:/cert \
+  wangminxiang0425/acmes:latest 
 ```
 Use Client in your project, see `client`.
