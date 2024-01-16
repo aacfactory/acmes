@@ -31,10 +31,10 @@ func Run() error {
 	app := &cli.App{
 		Name:        "acmes",
 		HelpName:    "help",
-		Usage:       "acmes utool",
+		Usage:       "acmes tool",
 		UsageText:   usage,
 		ArgsUsage:   "",
-		Version:     "v1.0.0",
+		Version:     "v1.1.0",
 		Description: description,
 		Commands: []*cli.Command{
 			ssl.Command,

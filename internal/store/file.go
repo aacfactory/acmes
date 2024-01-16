@@ -5,7 +5,6 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strings"
@@ -61,7 +60,7 @@ func (fs *FileStore) GetUser(_ context.Context, email string) (user *User, has b
 	if !fs.pathExist(resPath) {
 		return
 	}
-	resource, readResourceErr := ioutil.ReadFile(resPath)
+	resource, readResourceErr := os.ReadFile(resPath)
 	if readResourceErr != nil {
 		err = fmt.Errorf("acmes: get user failed, %v", readResourceErr)
 		return
@@ -70,7 +69,7 @@ func (fs *FileStore) GetUser(_ context.Context, email string) (user *User, has b
 	if !fs.pathExist(resPath) {
 		return
 	}
-	key, readKeyErr := ioutil.ReadFile(keyPath)
+	key, readKeyErr := os.ReadFile(keyPath)
 	if readResourceErr != nil {
 		err = fmt.Errorf("acmes: get user failed, %v", readKeyErr)
 		return
@@ -97,13 +96,13 @@ func (fs *FileStore) SaveUser(_ context.Context, user *User) (err error) {
 		}
 	}
 	resPath := filepath.Join(userDir, "user.json")
-	saveResErr := ioutil.WriteFile(resPath, user.Resource, 0600)
+	saveResErr := os.WriteFile(resPath, user.Resource, 0600)
 	if saveResErr != nil {
 		err = fmt.Errorf("acmes: save user failed, %v", saveResErr)
 		return
 	}
 	keyPath := filepath.Join(userDir, "key.pem")
-	saveKeyErr := ioutil.WriteFile(keyPath, user.Key, 0600)
+	saveKeyErr := os.WriteFile(keyPath, user.Key, 0600)
 	if saveKeyErr != nil {
 		err = fmt.Errorf("acmes: save user failed, %v", saveKeyErr)
 		return
@@ -130,7 +129,7 @@ func (fs *FileStore) GetUserCertificate(_ context.Context, email string, domain 
 	if !fs.pathExist(certPath) {
 		return
 	}
-	certPem, certReadErr := ioutil.ReadFile(certPath)
+	certPem, certReadErr := os.ReadFile(certPath)
 	if certReadErr != nil {
 		err = fmt.Errorf("acmes: get user certificate failed, %v", certReadErr)
 		return
@@ -139,7 +138,7 @@ func (fs *FileStore) GetUserCertificate(_ context.Context, email string, domain 
 	if !fs.pathExist(keyPath) {
 		return
 	}
-	keyPem, keyReadErr := ioutil.ReadFile(keyPath)
+	keyPem, keyReadErr := os.ReadFile(keyPath)
 	if keyReadErr != nil {
 		err = fmt.Errorf("acmes: get user certificate failed, %v", keyReadErr)
 		return
@@ -148,7 +147,7 @@ func (fs *FileStore) GetUserCertificate(_ context.Context, email string, domain 
 	if !fs.pathExist(resPath) {
 		return
 	}
-	res, resReadErr := ioutil.ReadFile(resPath)
+	res, resReadErr := os.ReadFile(resPath)
 	if resReadErr != nil {
 		err = fmt.Errorf("acmes: get user certificate failed, %v", resReadErr)
 		return
@@ -157,7 +156,7 @@ func (fs *FileStore) GetUserCertificate(_ context.Context, email string, domain 
 	if !fs.pathExist(notAfterPath) {
 		return
 	}
-	notAfterContent, notAfterReadErr := ioutil.ReadFile(notAfterPath)
+	notAfterContent, notAfterReadErr := os.ReadFile(notAfterPath)
 	if notAfterReadErr != nil {
 		err = fmt.Errorf("acmes: get user certificate failed, %v", notAfterReadErr)
 		return
@@ -197,19 +196,19 @@ func (fs *FileStore) SaveUserCertificate(_ context.Context, email string, domain
 		}
 	}
 	certPath := filepath.Join(domainDir, "cert.pem")
-	saveCertErr := ioutil.WriteFile(certPath, cert.Cert, 0600)
+	saveCertErr := os.WriteFile(certPath, cert.Cert, 0600)
 	if saveCertErr != nil {
 		err = fmt.Errorf("acmes: save user certificate failed, %v", saveCertErr)
 		return
 	}
 	keyPath := filepath.Join(domainDir, "key.pem")
-	saveKeyErr := ioutil.WriteFile(keyPath, cert.Key, 0600)
+	saveKeyErr := os.WriteFile(keyPath, cert.Key, 0600)
 	if saveKeyErr != nil {
 		err = fmt.Errorf("acmes: save user certificate failed, %v", saveKeyErr)
 		return
 	}
 	resPath := filepath.Join(domainDir, "cert.json")
-	saveResErr := ioutil.WriteFile(resPath, cert.Resource, 0600)
+	saveResErr := os.WriteFile(resPath, cert.Resource, 0600)
 	if saveResErr != nil {
 		err = fmt.Errorf("acmes: save user certificate failed, %v", saveResErr)
 		return
@@ -222,7 +221,7 @@ func (fs *FileStore) SaveUserCertificate(_ context.Context, email string, domain
 		return
 	}
 	notAfter := certificate.NotAfter.Format(time.RFC3339)
-	saveNotAfterErr := ioutil.WriteFile(notAfterPath, []byte(notAfter), 0600)
+	saveNotAfterErr := os.WriteFile(notAfterPath, []byte(notAfter), 0600)
 	if saveResErr != nil {
 		err = fmt.Errorf("acmes: save user certificate failed, %v", saveNotAfterErr)
 		return

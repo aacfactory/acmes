@@ -11,7 +11,7 @@ import (
 	"github.com/go-acme/lego/v4/certificate"
 	"github.com/go-acme/lego/v4/lego"
 	"golang.org/x/sync/singleflight"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -42,7 +42,7 @@ func (handler *Handler) ServeHTTP(writer http.ResponseWriter, request *http.Requ
 		return
 	}
 	param := &RequestParam{}
-	body, bodyErr := ioutil.ReadAll(request.Body)
+	body, bodyErr := io.ReadAll(request.Body)
 	if bodyErr != nil {
 		writer.WriteHeader(http.StatusBadRequest)
 		return
@@ -151,13 +151,20 @@ func (handler *Handler) renew(email string, domain string) (v *store.Certificate
 			v = cert
 			return
 		}
-		resource := &certificate.Resource{}
-		resourceErr := json.Unmarshal(cert.Resource, resource)
+		resource := certificate.Resource{}
+		resourceErr := json.Unmarshal(cert.Resource, &resource)
 		if resourceErr != nil {
 			handleErr = resourceErr
 			return
 		}
-		certificates, renewErr := handler.acme.Certificate.Renew(*resource, true, true, "")
+		certificates, renewErr := handler.acme.Certificate.RenewWithOptions(resource, &certificate.RenewOptions{
+			NotBefore:                      time.Now().AddDate(0, 0, -1),
+			NotAfter:                       time.Now().AddDate(0, 3, 0),
+			Bundle:                         true,
+			PreferredChain:                 "",
+			AlwaysDeactivateAuthorizations: false,
+			MustStaple:                     true,
+		})
 		if renewErr != nil {
 			handleErr = renewErr
 			return
@@ -196,11 +203,11 @@ func (handler *Handler) handleCertificates(certificates *certificate.Resource) (
 		return
 	}
 	if resp.StatusCode != 200 {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		err = fmt.Errorf("get cert from %s failed, %v", certificates.CertStableURL, string(body))
 		return
 	}
-	certPEM, readErr := ioutil.ReadAll(resp.Body)
+	certPEM, readErr := io.ReadAll(resp.Body)
 	if readErr != nil {
 		err = readErr
 		return

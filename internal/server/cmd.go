@@ -13,13 +13,14 @@ var Command = &cli.Command{
 	Category:    "",
 	Action: func(c *cli.Context) error {
 		return serve(options{
-			port:     c.Int("port"),
-			ca:       strings.TrimSpace(c.String("ca")),
-			key:      strings.TrimSpace(c.String("cakey")),
-			level:    strings.TrimSpace(c.String("level")),
-			store:    strings.TrimSpace(c.String("store")),
-			email:    strings.TrimSpace(c.String("email")),
-			provider: strings.TrimSpace(c.String("provider")),
+			port:         c.Int("port"),
+			ca:           strings.TrimSpace(c.String("ca")),
+			key:          strings.TrimSpace(c.String("cakey")),
+			level:        strings.TrimSpace(c.String("level")),
+			logFormatter: strings.TrimSpace(c.String("formatter")),
+			store:        strings.TrimSpace(c.String("store")),
+			email:        strings.TrimSpace(c.String("email")),
+			provider:     strings.TrimSpace(c.String("provider")),
 		})
 	},
 	Flags: []cli.Flag{
@@ -48,6 +49,12 @@ var Command = &cli.Command{
 			Value:   "info",
 			Usage:   "level for logger",
 			EnvVars: []string{"ACMES_LOG_LEVEL"},
+		},
+		&cli.StringFlag{
+			Name:    "formatter",
+			Value:   "text",
+			Usage:   "formatter for logger",
+			EnvVars: []string{"ACMES_LOG_FMT"},
 		},
 		&cli.StringFlag{
 			Required: true,

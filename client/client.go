@@ -8,7 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/aacfactory/afssl"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
@@ -21,17 +21,7 @@ func New(caPEM []byte, caKeyPem []byte, host string) (v *Client, err error) {
 		err = fmt.Errorf("acmes: host is empty")
 		return
 	}
-	config := afssl.CertificateConfig{
-		Country:            "",
-		Province:           "",
-		City:               "",
-		Organization:       "",
-		OrganizationalUnit: "",
-		CommonName:         "acmes",
-		IPs:                nil,
-		Emails:             nil,
-		DNSNames:           nil,
-	}
+	config := afssl.CertificateConfig{}
 	cert, key, genSslErr := afssl.GenerateCertificate(config, afssl.WithExpirationDays(365), afssl.WithParent(caPEM, caKeyPem))
 	if genSslErr != nil {
 		err = fmt.Errorf("acmes: generate client tls failed, %v", genSslErr)
@@ -88,7 +78,7 @@ func (c *Client) Obtain(ctx context.Context, domain string) (config *tls.Config,
 		return
 	}
 	defer resp.Body.Close()
-	body, bodyErr := ioutil.ReadAll(resp.Body)
+	body, bodyErr := io.ReadAll(resp.Body)
 	if bodyErr != nil {
 		err = fmt.Errorf("acmes: obtain failed, %v", bodyErr)
 		return
@@ -153,7 +143,7 @@ func (c *Client) renew(domain string, config *tls.Config) (notAfter time.Time) {
 		return
 	}
 	defer resp.Body.Close()
-	body, bodyErr := ioutil.ReadAll(resp.Body)
+	body, bodyErr := io.ReadAll(resp.Body)
 	if bodyErr != nil {
 		notAfter = time.Now().Add(60 * time.Second)
 		return

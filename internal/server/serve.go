@@ -10,13 +10,14 @@ import (
 )
 
 type options struct {
-	port     int
-	ca       string
-	key      string
-	level    string
-	store    string
-	email    string
-	provider string
+	port         int
+	ca           string
+	key          string
+	level        string
+	logFormatter string
+	store        string
+	email        string
+	provider     string
 }
 
 func serve(opt options) (err error) {
@@ -24,7 +25,7 @@ func serve(opt options) (err error) {
 	if port < 1 {
 		port = 443
 	}
-	log, logErr := createLog(opt.level)
+	log, logErr := createLog(opt.level, opt.logFormatter)
 	if logErr != nil {
 		err = fmt.Errorf("acmes: serve failed, %v", logErr)
 		return

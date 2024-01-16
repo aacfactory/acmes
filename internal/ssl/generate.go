@@ -3,7 +3,6 @@ package ssl
 import (
 	"fmt"
 	"github.com/aacfactory/afssl"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 )
@@ -37,30 +36,20 @@ func generate(cn string, expires int, out string) (err error) {
 			return
 		}
 	}
-	config := afssl.CertificateConfig{
-		Country:            "",
-		Province:           "",
-		City:               "",
-		Organization:       "",
-		OrganizationalUnit: "",
-		CommonName:         cn,
-		IPs:                nil,
-		Emails:             nil,
-		DNSNames:           nil,
-	}
+	config := afssl.CertificateConfig{}
 	caPEM, caKeyPEM, caErr := afssl.GenerateCertificate(config, afssl.CA(), afssl.WithExpirationDays(expires))
 	if caErr != nil {
 		err = fmt.Errorf("acmes: generate ca failed, %v", caErr)
 		return
 	}
 	certPath := filepath.Join(out, "cert.pem")
-	saveCertErr := ioutil.WriteFile(certPath, caPEM, 0600)
+	saveCertErr := os.WriteFile(certPath, caPEM, 0600)
 	if saveCertErr != nil {
 		err = fmt.Errorf("acmes: generate ca failed, %v", saveCertErr)
 		return
 	}
 	keyPath := filepath.Join(out, "key.pem")
-	saveKeyErr := ioutil.WriteFile(keyPath, caKeyPEM, 0600)
+	saveKeyErr := os.WriteFile(keyPath, caKeyPEM, 0600)
 	if saveKeyErr != nil {
 		err = fmt.Errorf("acmes: generate ca failed, %v", saveKeyErr)
 		return

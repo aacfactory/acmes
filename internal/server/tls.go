@@ -5,31 +5,21 @@ import (
 	"crypto/x509"
 	"fmt"
 	"github.com/aacfactory/afssl"
-	"io/ioutil"
+	"os"
 )
 
 func createTLSConfig(ca string, key string) (config *tls.Config, err error) {
-	caPEM, caErr := ioutil.ReadFile(ca)
+	caPEM, caErr := os.ReadFile(ca)
 	if caErr != nil {
 		err = fmt.Errorf("acmes: read ca file failed, %v", caErr)
 		return
 	}
-	keyPEM, keyErr := ioutil.ReadFile(key)
+	keyPEM, keyErr := os.ReadFile(key)
 	if keyErr != nil {
 		err = fmt.Errorf("acmes: read key file failed, %v", keyErr)
 		return
 	}
-	serverPEM, serverKeyPEM, serverErr := afssl.GenerateCertificate(afssl.CertificateConfig{
-		Country:            "",
-		Province:           "",
-		City:               "",
-		Organization:       "",
-		OrganizationalUnit: "",
-		CommonName:         "acmes",
-		IPs:                nil,
-		Emails:             nil,
-		DNSNames:           nil,
-	}, afssl.WithParent(caPEM, keyPEM))
+	serverPEM, serverKeyPEM, serverErr := afssl.GenerateCertificate(afssl.CertificateConfig{}, afssl.WithParent(caPEM, keyPEM))
 	if serverErr != nil {
 		err = fmt.Errorf("acmes: generate server cert failed, %v", serverErr)
 		return

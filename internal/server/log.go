@@ -5,12 +5,10 @@ import (
 	"github.com/aacfactory/logs"
 	"github.com/go-acme/lego/v4/log"
 	slog "log"
-	"os"
 	"strings"
 )
 
-func createLog(level string) (v logs.Logger, err error) {
-	formatter := logs.ConsoleFormatter
+func createLog(level string, formatter string) (v logs.Logger, err error) {
 	logLevel := logs.ErrorLevel
 	levelValue := strings.ToLower(level)
 	switch levelValue {
@@ -23,12 +21,21 @@ func createLog(level string) (v logs.Logger, err error) {
 	default:
 		logLevel = logs.ErrorLevel
 	}
+	lf := logs.TextFormatter
+	formatter = strings.TrimSpace(strings.ToLower(formatter))
+	switch formatter {
+	case "text_colorful":
+		lf = logs.ColorTextFormatter
+		break
+	case "json":
+		lf = logs.JsonFormatter
+		break
+	default:
+		break
+	}
 	v, err = logs.New(
-		logs.WithFormatter(formatter),
-		logs.Name("ACMES"),
+		logs.WithConsoleWriterFormatter(lf),
 		logs.WithLevel(logLevel),
-		logs.Writer(os.Stdout),
-		logs.Color(true),
 	)
 	if err != nil {
 		return

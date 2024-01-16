@@ -1,4 +1,4 @@
-FROM golang:1.18.2-alpine3.16 AS builder
+FROM golang:1.21.6-alpine3.19 AS builder
 
 ENV GO111MODULE on
 ENV GOPROXY https://goproxy.cn,direct
@@ -11,7 +11,7 @@ RUN mkdir /dist \
     && go build -o /dist/acmes
 
 
-FROM alpine:3.16
+FROM alpine:3.19
 
 COPY --from=builder /dist /
 
